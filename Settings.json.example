@@ -1,0 +1,5 @@
+{
+    "TG_Bot_ID": "",
+    "SERVER_PASSWORD": "",
+    "CRON_SCHEDULE": "* 19 * * *"
+}

@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS Instance(TG_Bot_ID varchar(50), SERVER_PASSWORD varchar(20), APP_VERSION varchar(10), CRON_SCHEDULE varchar(15));
+CREATE TABLE IF NOT EXISTS Games(GameName varchar(50), Expiry varchar(10), PageUrl varchar(255), ImageUrl varchar(255));
+CREATE TABLE IF NOT EXISTS Telegram(ChatID varchar(20), ChatName varchar(100), SendMuted boolean DEFAULT 0, SendChangelog boolean DEFAULT 0);

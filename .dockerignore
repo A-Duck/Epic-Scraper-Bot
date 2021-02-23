@@ -1,0 +1,10 @@
+.git
+.gitignore
+.dockerignore
+.vscode
+.scannerwork
+__pycache__
+ToDo.md
+README.md
+LICENSE
+scraper.db

@@ -113,7 +113,7 @@ def SetUpCronSchedule():
     Log.Verbose("Directory: {}/Scraper.py".format(CurrentDir))
     Log.Verbose("Schedule: {}".format(Schedule))
 
-    os.system('echo "{0} root /usr/local/bin/python {1}/Scraper.py >> /dev/stdout\n" >> /etc/cron.d/EpicScraper'.format(Schedule, CurrentDir))
+    os.system('echo "{0} root cd /app && /usr/local/bin/python {1}/Scraper.py >> /dev/stdout\n" >> /etc/cron.d/EpicScraper'.format(Schedule, CurrentDir))
     os.system('chmod 644 /etc/cron.d/EpicScraper')
     os.system('/etc/init.d/cron reload')
     os.system('service cron restart')

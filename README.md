@@ -11,7 +11,7 @@ A Telegram bot that notifies you when Epic Games releases new free games.
 
 Installation instructions can be found on the [Wiki](https://github.com/A-Duck/Epic-Scraper-Bot/wiki)
 
-## Badges of honour
+## Badges of Honour
 ---
 
 [![Repo Size](https://img.shields.io/github/repo-size/A-Duck/Epic-Scraper-Bot?label=Repo%20Size)](https://github.com/A-Duck/Epic-Scraper-Bot) 

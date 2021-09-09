@@ -1,8 +1,10 @@
 .git
 .gitignore
+.github/
 .dockerignore
 .vscode
 .scannerwork
+.sonarcloud.properties
 __pycache__
 ToDo.md
 README.md

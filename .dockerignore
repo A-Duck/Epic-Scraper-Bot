@@ -4,7 +4,7 @@
 .dockerignore
 .vscode
 .scannerwork
-sonar-project.properties
+.sonarcloud.properties
 __pycache__
 ToDo.md
 README.md

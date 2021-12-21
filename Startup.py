@@ -108,7 +108,6 @@ def PopulateInstanceVars():
 def SetUpCronSchedule():
     CurrentDir = os.getcwd()
     Schedule = DBStuffs.DB_FetchSingle("CRON_SCHEDULE", "Instance")
-    Username = getpass.getuser()
 
     Log.Verbose("Directory: {}/Scraper.py".format(CurrentDir))
     Log.Verbose("Schedule: {}".format(Schedule))

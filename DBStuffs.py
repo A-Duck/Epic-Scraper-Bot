@@ -87,8 +87,8 @@ def DB_GetRowCount(Table):
     cursor = conn.cursor()
     Results = 0
 	
-    for row in cursor.execute("SELECT * FROM {}".format(Table)):
-        Results += 1
+    cursor.execute("SELECT Count(*) FROM {}".format(Table))
+    (Results,)=cursor.fetchone()
 
     conn.close()
 

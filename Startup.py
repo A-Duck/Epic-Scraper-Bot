@@ -16,16 +16,6 @@ APP_VERSION = "1.0"
 
 #############################################################################################################
 
-# Get specified Variable value from OS environment variables
-def GetEnvVar(VariableName):
-    try:
-        Test = os.environ.get(VariableName)
-    except:
-        Test is None
-    return Test
-
-#############################################################################################################
-
 # Get specified Variable value from JSON Settings file
 def GetJsonVar(VariableName):
     Test = ""
@@ -49,7 +39,7 @@ def Get_Variable(VariableName):
     Log.Verbose("Determining {}".format(VariableName))
 
     ScriptValue = GetJsonVar(VariableName)
-    EnvValue = GetEnvVar(VariableName)
+    EnvValue = os.environ.get(VariableName)
     NewValue = ""
 
     if ((ScriptValue is not None) and (ScriptValue != "")):

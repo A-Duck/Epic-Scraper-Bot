@@ -16,16 +16,6 @@ APP_VERSION = "1.0"
 
 #############################################################################################################
 
-# Get specified Variable value from OS environment variables
-def GetEnvVar(VariableName):
-    try:
-        Test = os.environ.get(VariableName)
-    except:
-        Test is None
-    return Test
-
-#############################################################################################################
-
 # Get specified Variable value from JSON Settings file
 def GetJsonVar(VariableName):
     Test = ""
@@ -37,7 +27,11 @@ def GetJsonVar(VariableName):
         SettingsArray = json.loads(SettingsBuffer)
 
         Test = SettingsArray[VariableName]
-    except:
+    except FileNotFoundError:
+        Log.Warning("Missing File")
+        Test is None
+    except KeyError:
+        Log.Warning("Invalid Key in settings file")
         Test is None
     
     return Test
@@ -49,7 +43,7 @@ def Get_Variable(VariableName):
     Log.Verbose("Determining {}".format(VariableName))
 
     ScriptValue = GetJsonVar(VariableName)
-    EnvValue = GetEnvVar(VariableName)
+    EnvValue = os.environ.get(VariableName)
     NewValue = ""
 
     if ((ScriptValue is not None) and (ScriptValue != "")):
@@ -108,7 +102,6 @@ def PopulateInstanceVars():
 def SetUpCronSchedule():
     CurrentDir = os.getcwd()
     Schedule = DBStuffs.DB_FetchSingle("CRON_SCHEDULE", "Instance")
-    Username = getpass.getuser()
 
     Log.Verbose("Directory: {}/Scraper.py".format(CurrentDir))
     Log.Verbose("Schedule: {}".format(Schedule))

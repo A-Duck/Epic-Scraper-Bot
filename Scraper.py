@@ -39,7 +39,7 @@ def FindFreeGames(GamesJson):
     ActiveGames = []
 
     for element in GamesJson:
-        if element["promotions"] is not None:
+        if (element["promotions"] is not None) and (element["price"]["totalPrice"]["discountPrice"] == 0):
             array = element["promotions"]["promotionalOffers"]
             
             try:

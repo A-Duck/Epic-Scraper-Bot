@@ -27,7 +27,11 @@ def GetJsonVar(VariableName):
         SettingsArray = json.loads(SettingsBuffer)
 
         Test = SettingsArray[VariableName]
-    except:
+    except FileNotFoundError:
+        Log.Warning("Missing File")
+        Test is None
+    except KeyError:
+        Log.Warning("Invalid Key in settings file")
         Test is None
     
     return Test

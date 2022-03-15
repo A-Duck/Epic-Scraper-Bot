@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import Log
 import DBStuffs
 import json
@@ -8,61 +9,11 @@ import subprocess
 
 #############################################################################################################
 
-APP_VERSION = "1.0"
-
-#############################################################################################################
-
-#region Variable Determiners
-
-#############################################################################################################
-
-# Get specified Variable value from JSON Settings file
-def GetJsonVar(VariableName):
-    Test = ""
-
-    try:
-        with open('Settings.json', 'r') as Settingsfile:
-            SettingsBuffer = Settingsfile.read()
-
-        SettingsArray = json.loads(SettingsBuffer)
-
-        Test = SettingsArray[VariableName]
-    except FileNotFoundError:
-        Log.Warning("Missing File")
-        Test is None
-    except KeyError:
-        Log.Warning("Invalid Key in settings file")
-        Test is None
-    
-    return Test
-
-#############################################################################################################
-
 # Gets env, settings file & DB vars then determines & returns the correct value to save
 def Get_Variable(VariableName):
     Log.Verbose("Determining {}".format(VariableName))
-
-    ScriptValue = GetJsonVar(VariableName)
-    EnvValue = os.environ.get(VariableName)
-    NewValue = ""
-
-    if ((ScriptValue is not None) and (ScriptValue != "")):
-        Log.Verbose("Setting Settings file value for {}".format(VariableName))
-        NewValue = ScriptValue
     
-    if ((EnvValue is not None) and (EnvValue != "")):
-        Log.Verbose("Setting environment veriable value for {}".format(VariableName))
-        NewValue = EnvValue
-    
-    return NewValue
-
-#############################################################################################################
-
-#endregion
-
-#############################################################################################################
-
-#region Varible Validity
+    return os.getenv(VariableName)
 
 #############################################################################################################
 
@@ -81,10 +32,6 @@ def Evaluate_AllFields():
 
 #############################################################################################################
 
-#endregion
-
-#############################################################################################################
-
 # Populate DB vars with values from env / settings file
 def PopulateInstanceVars():
     DBStuffs.DB_CreateDatabase()
@@ -92,7 +39,6 @@ def PopulateInstanceVars():
     DBStuffs.DB_UpdateSettings("TG_Bot_ID", Get_Variable("TG_Bot_ID"))
     DBStuffs.DB_UpdateSettings("SERVER_PASSWORD", Get_Variable("SERVER_PASSWORD"))
     DBStuffs.DB_UpdateSettings("CRON_SCHEDULE", Get_Variable("CRON_SCHEDULE"))
-    DBStuffs.DB_UpdateSettings("APP_VERSION", APP_VERSION)
 
     Evaluate_AllFields()
 
@@ -134,6 +80,7 @@ def DisplayServerPassword():
 
 # Orchestrator method
 def ControlMethod():
+    load_dotenv()
     PopulateInstanceVars()
     SetUpCronSchedule()
     DisplayServerPassword()

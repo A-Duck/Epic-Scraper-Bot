@@ -2,4 +2,4 @@ scraper.db
 .vscode
 .scannerwork
 __pycache__
-Settings.json
+.env

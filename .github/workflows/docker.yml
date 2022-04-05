@@ -64,9 +64,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }} # Publish main branch as latest
+            type=ref,event=branch # Publish as branch name
+            type=semver,pattern={{version}} # Publish as version tag
+            type=semver,pattern={{major}}.{{minor}} # Publish as main version tag, excl patch versions
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action

@@ -21,8 +21,17 @@ def GetJsonData():
 # Returns the URL of the correct image from the array of image elements
 def GetThumbnail(JsonImageArray):
     for imgarr in JsonImageArray:
-        if imgarr["type"] == "DieselStoreFrontWide": # Changed from "OfferImageWide" for 2020 December giveaway
+        
+        if imgarr["type"] == "OfferImageWide": # Added "OfferImageWide" again because not all games have "DieselStoreFrontWide" (Rogue Legacy - 7 Apr 2022)
+            print("Using: OfferImageWide")
             return imgarr["url"]
+        elif (imgarr["type"] == "DieselStoreFrontWide"): # Use "DieselStoreFrontWide" because not all games have "OfferImageWide" (2020 December giveaway)
+            print("Using: DieselStoreFrontWide")
+            return imgarr["url"]
+    
+    print("Using: Fallback")
+    return JsonImageArray[len(imgarr)]["url"] # Added a fallback option in case a game has neither of the above options.
+    # The Game should have at least one image that can be used, the fallback option uses the last image in the array because the first may be a vault image (used to hide the next games)
 
 ############################################################################################################################
 

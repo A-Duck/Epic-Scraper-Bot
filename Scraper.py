@@ -55,7 +55,7 @@ def FindFreeGames(GamesJson):
                 if len(array[0]) != 0:
                     Name = element["title"]
                     ExpiryDate = GetPromotionEndDate(element["promotions"]["promotionalOffers"])
-                    PageURL = "https://www.epicgames.com/store/en-US/p/" + element["productSlug"]
+                    PageURL = "https://www.epicgames.com/store/en-US/p/" + element["catalogNs"]["mappings"][0]["pageSlug"]
                     ImgURL = GetThumbnail(element["keyImages"])
                     
                     ActiveGames.append([Name, ExpiryDate, PageURL, ImgURL])

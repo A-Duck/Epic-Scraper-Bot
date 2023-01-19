@@ -43,6 +43,15 @@ def GetPromotionEndDate(JsonPromotionArray):
 
 ############################################################################################################################
 
+# Retrns the page URL for the game
+def GetPageURL(element):
+    if element["productSlug"] is not None:
+        return "https://www.epicgames.com/store/en-US/p/" + element["productSlug"]
+    else:
+        return "https://www.epicgames.com/store/en-US/p/" + element["catalogNs"]["mappings"][0]["pageSlug"]
+
+############################################################################################################################
+
 # Gets information for each game and sends it to the processing method
 def FindFreeGames(GamesJson):
     ActiveGames = []
@@ -55,7 +64,7 @@ def FindFreeGames(GamesJson):
                 if len(array[0]) != 0:
                     Name = element["title"]
                     ExpiryDate = GetPromotionEndDate(element["promotions"]["promotionalOffers"])
-                    PageURL = "https://www.epicgames.com/store/en-US/p/" + element["productSlug"]
+                    PageURL = GetPageURL(element)
                     ImgURL = GetThumbnail(element["keyImages"])
                     
                     ActiveGames.append([Name, ExpiryDate, PageURL, ImgURL])

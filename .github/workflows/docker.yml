@@ -12,6 +12,8 @@ on:
       - develop    
     tags:
       - 'v*'
+  schedule:
+    - cron: "36 4 5 * *"
 
 env:
   # Use docker.io for Docker Hub if empty

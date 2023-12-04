@@ -20,7 +20,7 @@ cbd_FALSE, cbd_TRUE, cbd_SETTINGSMENU, cbd_SILENTSEND, cbd_CHANGELOG, cbd_EXIT =
 #############################################################################################################
 
 # Displays the options in within the settings menu
-def Display_SettingsMenu(update, context):
+async def Display_SettingsMenu(update, context):
     keyboard = [
         [InlineKeyboardButton("Send Silently", callback_data=str(cbd_SILENTSEND)),
          InlineKeyboardButton("Send Updates", callback_data=str(cbd_CHANGELOG))]
@@ -28,7 +28,7 @@ def Display_SettingsMenu(update, context):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text(
+    await update.message.reply_text(
         "Which Setting would you like to change?",
         reply_markup=reply_markup
     )
@@ -41,9 +41,9 @@ def Display_SettingsMenu(update, context):
 #############################################################################################################
 
 # Display menu for changelog sending
-def Display_Changelog(update, context):
+async def Display_Changelog(update, context):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     keyboard = [
         [InlineKeyboardButton("Yes", callback_data=str(cbd_TRUE)),
@@ -52,7 +52,7 @@ def Display_Changelog(update, context):
     
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    query.edit_message_text(
+    await query.edit_message_text(
         text="Would you like to receive notifications when updates are available?",
         reply_markup=reply_markup
     )
@@ -62,9 +62,9 @@ def Display_Changelog(update, context):
 #############################################################################################################
 
 # enable / disable changelog sending
-def Set_ChangelogSending(update, context):
+async def Set_ChangelogSending(update, context):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     NewSetting = update.callback_query.data
     ChatID = str(update.callback_query.message.chat.id)
@@ -72,14 +72,14 @@ def Set_ChangelogSending(update, context):
     if (IsChatRegistered(ChatID)):
         if NewSetting == str(cbd_TRUE):
             DBStuffs.DB_Post("UPDATE Telegram SET SendChangelog = \"{}\" WHERE ChatID == {}".format(True, ChatID))
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Update messages enabled")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Update messages enabled")
             Log.Information("Enabled update messages for chat: {}".format(ChatID))
         else:
             DBStuffs.DB_Post("UPDATE Telegram SET SendChangelog = \"{}\" WHERE ChatID == {}".format(False, ChatID))
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Update messages disabled")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Update messages disabled")
             Log.Information("Disabled update messages for chat: {}".format(ChatID))
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Chat needs to be registered first")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Chat needs to be registered first")
         Log.Warning("{} tried to set Silent Sending but is not registered".format(ChatID))
         
     return ConversationHandler.END
@@ -95,9 +95,9 @@ def Set_ChangelogSending(update, context):
 #############################################################################################################
 
 # Display menu for silent sending
-def Display_SilentSend(update, context):
+async def Display_SilentSend(update, context):
     query = update.callback_query
-    query.answer()
+    await query.answer()
     
     keyboard = [
         [InlineKeyboardButton("Yes", callback_data=str(cbd_TRUE)),
@@ -106,7 +106,7 @@ def Display_SilentSend(update, context):
     
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    query.edit_message_text(
+    await query.edit_message_text(
         text="Would you like the messages to be sent without notification?",
         reply_markup=reply_markup
     )
@@ -116,9 +116,9 @@ def Display_SilentSend(update, context):
 #############################################################################################################
 
 # enables / disables silent messages
-def Set_SilentSend(update, context):
+async def Set_SilentSend(update, context):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     NewSetting = update.callback_query.data
     ChatID = str(update.callback_query.message.chat.id)
@@ -126,14 +126,14 @@ def Set_SilentSend(update, context):
     if (IsChatRegistered(ChatID)):
         if NewSetting == str(cbd_TRUE):
             DBStuffs.DB_Post("UPDATE Telegram SET SendMuted = \"{}\" WHERE ChatID == {}".format(True, ChatID))
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Silent sending enabled")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Silent sending enabled")
             Log.Information("Enabled silent sending for chat: {}".format(ChatID))
         else:
             DBStuffs.DB_Post("UPDATE Telegram SET SendMuted = \"{}\" WHERE ChatID == {}".format(False, ChatID))
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Silent sending disabled")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Silent sending disabled")
             Log.Information("Disabled silent sending for chat: {}".format(ChatID))
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Chat needs to be registered first")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Chat needs to be registered first")
         Log.Warning("{} tried to set Silent Sending but is not registered".format(ChatID))
         
     return ConversationHandler.END
@@ -173,12 +173,12 @@ def IsChatRegistered(ChatID):
 #############################################################################################################
 
 # Saves the chat details to the database, enrolling the chat with the server
-def RegisterChat(update, context):
+async def RegisterChat(update, context):
     ChatName = Getchatname(update)
     ChatID = update.effective_chat.id
 
     DBStuffs.DB_Post("INSERT INTO Telegram (ChatID, ChatName, SendMuted, SendChangelog) VALUES (\"{}\", \"{}\", \"{}\", \"{}\");".format(ChatID, ChatName, False, False))
-    context.bot.send_message(chat_id=ChatID, text="\"{}\" ({}) is now registered with the server".format(ChatName, ChatID))
+    await context.bot.send_message(chat_id=ChatID, text="\"{}\" ({}) is now registered with the server".format(ChatName, ChatID))
 
     Telegram.SendCurrentGames(ChatID)
     
@@ -191,7 +191,7 @@ def RegisterChat(update, context):
 #############################################################################################################
 
 # Registers chat with server
-def start(update, context):
+async def start(update, context):
     ChatName = Getchatname(update)
     ChatID = str(update.message.chat.id)
 
@@ -200,7 +200,7 @@ def start(update, context):
         if (Common.IsServerPasswordProtected()):
             
             if "/start" in update.message.text:
-                update.message.reply_text("This server is password protected.\nPlease enter the password now or send /cancel to exit")
+                await update.message.reply_text("This server is password protected.\nPlease enter the password now or send /cancel to exit")
 
             context.user_data["IncorrectCount"] = 0
             
@@ -210,23 +210,23 @@ def start(update, context):
             return ConversationHandler.END
             
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="\"{}\" ({}) has already been registered with the server".format(ChatName, ChatID))
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="\"{}\" ({}) has already been registered with the server".format(ChatName, ChatID))
         Log.Warning("\"{}\" ({}) has already been registered with the server".format(ChatName, ChatID))
         return ConversationHandler.END
 
 #############################################################################################################
 
 # De-register chat from server
-def stop(update, context):
+async def stop(update, context):
     ChatID = str(update.message.chat.id)
     ChatName = Getchatname(update)
 
     if IsChatRegistered(ChatID):
         DBStuffs.DB_Post("DELETE FROM Telegram WHERE ChatID == \"{}\"".format(ChatID))
-        context.bot.send_message(chat_id=update.effective_chat.id, text="\"{}\" ({}) has been de-registered from the server".format(ChatName, ChatID))
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="\"{}\" ({}) has been de-registered from the server".format(ChatName, ChatID))
         Log.Information("\"{}\" ({}) has been de-registered".format(ChatName, ChatID))
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="This chat was never registered")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="This chat was never registered")
         Log.Warning("{} tried to de-register {}, but was never registered with the server".format(ChatID, ChatName))
     
     return ConversationHandler.END
@@ -234,12 +234,12 @@ def stop(update, context):
 #############################################################################################################
 
 # Method to tell user that the command was not recognised
-def UnknownCommand(update, context):
+async def UnknownCommand(update, context):
     if ("group" in update.message.chat.type):
         if ("@EpicScraperBot" in update.message.text):
-            context.bot.send_message(chat_id=update.effective_chat.id, text="U WOT M8?")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="U WOT M8?")
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="U WOT M8?")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="U WOT M8?")
 
     return ConversationHandler.END
 
@@ -256,14 +256,14 @@ def resend(update, context):
 #############################################################################################################
 
 # returns to the previous menu's handle
-def end(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Exited")
+async def end(update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Exited")
     return ConversationHandler.END
 
 #############################################################################################################
 
 # Verifies that the submitted password matches the server record, Registers chat if successful
-def ValidatePassword(update, context):
+async def ValidatePassword(update, context):
     context.bot.delete_message(chat_id=update.effective_chat.id, message_id=update.message.message_id)
 
     SendPass = update.message.text
@@ -273,7 +273,7 @@ def ValidatePassword(update, context):
 
     if context.user_data["IncorrectCount"] <= 3:
         if SendPass == ServerPass:
-            context.bot.send_message(chat_id=update.effective_chat.id, text="Password correct. Registering...")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Password correct. Registering...")
             RegisterChat(update, context)
             return ConversationHandler.END
         else:

@@ -1,5 +1,6 @@
-from telegram import ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent, ParseMode
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, Filters, InlineQueryHandler
+from telegram import ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, filters, InlineQueryHandler
+from telegram.constants import ParseMode
 from telegram.utils.helpers import escape_markdown
 import DBStuffs 
 import Log
@@ -296,7 +297,7 @@ def main():
                       CommandHandler('settings', Display_SettingsMenu),
                       CommandHandler('resend', resend),
                       CommandHandler('stop', stop),
-                      MessageHandler(Filters.command, UnknownCommand)],
+                      MessageHandler(filters.command, UnknownCommand)],
         
         states={
             state_FirstMenu: [CallbackQueryHandler(Display_SilentSend, pattern='^' + str(cbd_SILENTSEND) + '$'),
@@ -306,11 +307,11 @@ def main():
 
             state_ChangelogSend: [CallbackQueryHandler(Set_ChangelogSending, pattern='^{}|{}$'.format(str(cbd_TRUE), str(cbd_FALSE)))],
 
-            state_Password: [MessageHandler(Filters.text, ValidatePassword),
+            state_Password: [MessageHandler(filters.text, ValidatePassword),
                              CommandHandler('cancel', end)]
         },
 
-        fallbacks=[MessageHandler(Filters.command, UnknownCommand)]
+        fallbacks=[MessageHandler(filters.command, UnknownCommand)]
     )
 
     # Add ConversationHandler to dispatcher that will be used for handling updates

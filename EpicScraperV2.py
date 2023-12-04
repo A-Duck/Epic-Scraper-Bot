@@ -1,7 +1,7 @@
-from telegram import ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, filters, InlineQueryHandler
+from telegram import ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent, Update
+from telegram.ext import (Application, CommandHandler, CallbackQueryHandler, ConversationHandler, InlineQueryHandler, MessageHandler, ContextTypes, filters)
+from telegram.helpers import escape_markdown
 from telegram.constants import ParseMode
-from telegram.utils.helpers import escape_markdown
 import DBStuffs 
 import Log
 import Common
@@ -289,15 +289,15 @@ def ValidatePassword(update, context):
 # Creates listeners for the Telegram bot's menu
 def main():
     TG_Bot_ID = DBStuffs.DB_FetchSingle("TG_Bot_ID", "Instance")
-    updater = Updater(TG_Bot_ID, use_context=True)
-    dp = updater.dispatcher
+    application = Application.builder().token(TG_Bot_ID).build()
 
-    ch_settingsmenu = ConversationHandler(
+    conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start),
                       CommandHandler('settings', Display_SettingsMenu),
                       CommandHandler('resend', resend),
                       CommandHandler('stop', stop),
-                      MessageHandler(filters.command, UnknownCommand)],
+                      MessageHandler(filters.COMMAND, UnknownCommand)
+                    ],
         
         states={
             state_FirstMenu: [CallbackQueryHandler(Display_SilentSend, pattern='^' + str(cbd_SILENTSEND) + '$'),
@@ -307,23 +307,18 @@ def main():
 
             state_ChangelogSend: [CallbackQueryHandler(Set_ChangelogSending, pattern='^{}|{}$'.format(str(cbd_TRUE), str(cbd_FALSE)))],
 
-            state_Password: [MessageHandler(filters.text, ValidatePassword),
+            state_Password: [MessageHandler(filters.TEXT, ValidatePassword),
                              CommandHandler('cancel', end)]
         },
 
-        fallbacks=[MessageHandler(filters.command, UnknownCommand)]
+        fallbacks=[MessageHandler(filters.COMMAND, UnknownCommand)]
     )
 
-    # Add ConversationHandler to dispatcher that will be used for handling updates
-    dp.add_handler(ch_settingsmenu)
+    # Add ConversationHandler to application that will be used for handling updates
+    application.add_handler(conv_handler)
 
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    # Run the bot until the user presses Ctrl-C
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 #############################################################################################################
 
